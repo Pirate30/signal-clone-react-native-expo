@@ -31,7 +31,7 @@ const HomeScreen = ({ navigation }) => {
 
   useEffect(() => {
     const unsub = db.collection("chats").onSnapshot((ss) => {
-      console.log("ss", ss.docs[0].data());
+      // console.log("ss", ss.docs[0].data());
       setChats(
         ss.docs.map((doc) => ({
           id: doc.id,
@@ -51,16 +51,19 @@ const HomeScreen = ({ navigation }) => {
       headerTitleColor: "black",
       headerLeft: () => (
         <View style={{ marginLeft: 20 }}>
-          <TouchableOpacity activeOpacity={0.5} onPress={() => signOut}>
-            <Avatar
-              rounded
-              source={{
-                uri: auth.currentUser
-                  ? auth.currentUser
-                  : "https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/User-avatar.svg/1200px-User-avatar.svg.png",
-              }}
-            />
-          </TouchableOpacity>
+          <>
+            <TouchableOpacity activeOpacity={0.5} onPress={signOut}>
+              <Avatar
+                rounded
+                source={{
+                  uri: auth.currentUser.photoURL
+                    ? auth.currentUser.photoURL
+                    : "https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/User-avatar.svg/1200px-User-avatar.svg.png",
+                  // uri: auth?.currentUser?.photoURL,
+                }}
+              />
+            </TouchableOpacity>
+          </>
         </View>
       ),
       headerRight: () => (
@@ -72,15 +75,17 @@ const HomeScreen = ({ navigation }) => {
             marginRight: 20,
           }}
         >
-          <TouchableOpacity activeOpacity={0.5}>
-            <AntDesign name="camerao" size={24} color="black" />
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => navigation.navigate("AddChat")}
-            activeOpacity={0.5}
-          >
-            <FontAwesome name="pencil-square-o" size={24} color="black" />{" "}
-          </TouchableOpacity>
+          <>
+            <TouchableOpacity activeOpacity={0.5}>
+              <AntDesign name="camerao" size={24} color="black" />
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => navigation.navigate("AddChat")}
+              activeOpacity={0.5}
+            >
+              <FontAwesome name="pencil-square-o" size={24} color="black" />
+            </TouchableOpacity>
+          </>
         </View>
       ),
     });

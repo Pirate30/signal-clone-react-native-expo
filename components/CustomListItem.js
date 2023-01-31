@@ -1,10 +1,23 @@
 import { StyleSheet, Text, View } from "react-native";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Avatar, ListItem } from "@rneui/themed";
+import { auth, db } from "../firebase";
 
 const CustomListItem = ({ id, chatName, enterChat }) => {
+  const [messages, setMessages] = useState([]);
+
+  useEffect(() => {
+    const unsub = db
+      .collection("chats")
+      .doc(id)
+      .collection("messages")
+      .orderBy("timestamp", "desc")
+      .onSnapshot((ss) => setMessages(ss.docs.map((doc) => doc.data())));
+    return unsub;
+  }, [id]);
+
   return (
-    <ListItem onPress={() => enterChat(id, chatName)} key={id} bottomDivider>
+    <ListItem key={id} onPress={() => enterChat(id, chatName)} bottomDivider>
       <Avatar
         rounded
         source={{
@@ -16,14 +29,10 @@ const CustomListItem = ({ id, chatName, enterChat }) => {
           {chatName}
         </ListItem.Title>
         <ListItem.Subtitle numberOfLines={1} ellipsizeMode="tail">
-          Hello Friend! Hello Friend Hello Friend! Hello Friend Hello Friend!
-          Hello Friend Hello Friend! Hello Friend Hello Friend! Hello Friend
-          Hello Friend! Hello Friend Hello Friend! Hello Friend Hello Friend!
-          Hello Friend Hello Friend! Hello Friend Hello Friend! Hello Friend
-          Hello Friend! Hello Friend Hello Friend! Hello Friend Hello Friend!
-          Hello Friend Hello Friend! Hello Friend Hello Friend! Hello Friend
-          Hello Friend! Hello Friend Hello Friend! Hello Friend Hello Friend!
-          Hello Friend Hello Friend! Hello Friend Hello Friend! Hello Friend
+          {auth.currentUser.email === messages?.[0]?.email
+            ? "You"
+            : messages?.[0]?.displayName}
+          :{messages?.[0]?.message}
         </ListItem.Subtitle>
       </ListItem.Content>
     </ListItem>
